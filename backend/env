@@ -1,0 +1,15 @@
+DATABASE_URL=postgresql+psycopg2://postgres:YOURPASSWORD@localhost:5432/haat
+JWT_SECRET=put-a-long-random-text-here
+DEBUG_OTP=true
+# your own phone (+91XXXXXXXXXX) or email, comma separated -> you become the shop owner
+ADMIN_IDENTIFIERS=you@gmail.com
+SHOP_LAT=22.5726
+SHOP_LNG=88.3639
+# optional (leave empty to use mock payment)
+RAZORPAY_KEY_ID=
+RAZORPAY_KEY_SECRET=
+# optional (leave empty: OTP is shown on screen + server console)
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=587
+SMTP_USER=
+SMTP_PASS=
