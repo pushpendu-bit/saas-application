@@ -7,7 +7,8 @@ import { OrderList, Track } from "./Orders";
 import Owner from "./Owner";
 
 export default function App() {
-  const [user, setUser] = useState(() => (getToken() ? JSON.parse(localStorage.getItem("user") || "null") : null));
+  const [user, setUser] = useState(null);
+  const [authChecking, setAuthChecking] = useState(true);
   const [view, setView] = useState("shop");
   const [trackId, setTrackId] = useState(null);
   const [products, setProducts] = useState([]);
@@ -16,6 +17,26 @@ export default function App() {
   const [err, setErr] = useState("");
 
   useEffect(() => localStorage.setItem("cart", JSON.stringify(cart)), [cart]);
+  useEffect(() => {
+    const token = getToken();
+
+    if (!token) {
+      setAuthChecking(false);
+      return;
+    }
+
+    api.get("/me")
+      .then((data) => {
+        setUser(data);
+        localStorage.setItem("user", JSON.stringify(data));
+      })
+      .catch(() => {
+        localStorage.removeItem("token");
+        localStorage.removeItem("user");
+        setUser(null);
+      })
+      .finally(() => setAuthChecking(false));
+  }, []);
 
   useEffect(() => {
     const out = () => logout();
@@ -26,7 +47,7 @@ export default function App() {
   useEffect(() => {
     if (!user) return;
     api.get("/products").then(setProducts).catch((e) => setErr("Cannot reach server: " + e.message));
-    api.get("/config").then(setConfig).catch(() => {});
+    api.get("/config").then(setConfig).catch(() => { });
   }, [user]);
 
   function logout() {
@@ -45,7 +66,12 @@ export default function App() {
     });
   }
 
-  if (!user) return <Login onLogin={setUser} />;
+  if (authChecking) return <p>Checking login...</p>;
+
+  if (!user) return <Login onLogin={(data) => {
+    localStorage.setItem("user", JSON.stringify(data));
+    setUser(data);
+  }} />;
 
   const count = Object.values(cart).reduce((a, b) => a + b, 0);
   const go = (v) => () => setView(v);

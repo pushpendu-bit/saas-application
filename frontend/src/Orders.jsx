@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { api } from "./api";
-import { STATUS_LABEL, STEPS } from "./status";
+import { STATUS_LABEL, STEPS } from "./status.js";
 import MapView from "./MapView";
 
 export function OrderList({ onOpen }) {
